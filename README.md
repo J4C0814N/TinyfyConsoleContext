@@ -18,7 +18,9 @@ Once installed Simply:
 DUTYTODOS:
 
 1. Verify input is an image
-2. Add context menu to image file types only
+2. Allow multiple images at once (Probably thread / async)
+3. Set up for DI, pull code out into libraries
+2. ~~Add context menu to image file types only~~ .jpg .png added
 2. Optimise code
 3. ~~Show remaining API Calls count~~
 4. Check for existing install (Do not duplicate Registry key)
