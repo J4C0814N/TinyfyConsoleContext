@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -24,6 +25,8 @@ namespace TinyfyConsoleContext
                 System.Console.WriteLine("Please enter an argument.");
                 Environment.Exit(0);
             }else{
+
+
                 string key = ConfigurationManager.AppSettings["APIKey"];
                 string url = ConfigurationManager.AppSettings["APIURL"];
 
