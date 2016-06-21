@@ -3,3 +3,4 @@
 \\homes.deakin.edu.au\astles\my documents\visual studio 2013\Projects\TinyfyConsoleContext\TinyfyConsoleContext\bin\Debug\TinyfyConsoleContext.pdb
 \\homes.deakin.edu.au\astles\my documents\visual studio 2013\Projects\TinyfyConsoleContext\TinyfyConsoleContext\obj\Debug\TinyfyConsoleContext.exe
 \\homes.deakin.edu.au\astles\my documents\visual studio 2013\Projects\TinyfyConsoleContext\TinyfyConsoleContext\obj\Debug\TinyfyConsoleContext.pdb
+\\homes.deakin.edu.au\astles\my documents\visual studio 2013\Projects\TinyfyConsoleContext\TinyfyConsoleContext\obj\Debug\TinyfyConsoleContext.csprojResolveAssemblyReference.cache
