@@ -18,26 +18,36 @@ namespace TinyfyConsoleContext
  
         static void Main(string[] args)
         {
-            string key = ConfigurationManager.AppSettings["APIKey"];
-            string input = "large-input.png";
-            string output = "tiny-output.png";
-
-            string url = ConfigurationManager.AppSettings["APIURL"]; ;
-
-            WebClient client = new WebClient();
-            string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes("api:" + key));
-            client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + auth);
-
-            try
+            // Make sure an argument was supplied
+            if (args.Length == 0)
             {
-                client.UploadData(url, File.ReadAllBytes(input));
-                /* Compression was successful, retrieve output from Location header. */
-                client.DownloadFile(client.ResponseHeaders["Location"], output);
-            }
-            catch (WebException)
-            {
-                /* Something went wrong! You can parse the JSON body for details. */
-                Console.WriteLine("Compression failed.");
+                System.Console.WriteLine("Please enter an argument.");
+                Environment.Exit(0);
+            }else{
+                string key = ConfigurationManager.AppSettings["APIKey"];
+                string url = ConfigurationManager.AppSettings["APIURL"];
+
+                string input = args[0];
+                string ext = Path.GetExtension(input);
+                // Might be a better way to combine the new filename, but this works at least.
+                string output = Path.GetDirectoryName(input)+@"\"+Path.GetFileNameWithoutExtension(input)+"-Tinyfied"+ext;
+
+                WebClient client = new WebClient();
+                string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes("api:" + key));
+                client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + auth);
+
+                try
+                {
+                    client.UploadData(url, File.ReadAllBytes(input));
+                    // Compression was successful, retrieve output from Location header.
+                    client.DownloadFile(client.ResponseHeaders["Location"], output);
+                }
+                catch (WebException)
+                {
+                    // Something went wrong! You can parse the JSON body for details.
+                    Console.WriteLine("Compression failed.");
+                }
+
             }
         }
     }
