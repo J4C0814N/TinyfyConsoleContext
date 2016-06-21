@@ -15,9 +15,10 @@ Once installed Simply:
 2. Select the Tinify context menu item
 3. An [ImageName]-Tinified.[ext] image will be created in the same directory
 
-TODO:
+DUTYTODOS:
 
 1. Verify input is an image
+2. Add context menu to image file types only
 2. Optimise code
 3. ~~Show remaining API Calls count~~
 4. Check for existing install (Do not duplicate Registry key)
