@@ -31,6 +31,7 @@ namespace TinyfyConsoleContext
                 // Set up vars
                 string key = ConfigurationManager.AppSettings["APIKey"];
                 string url = ConfigurationManager.AppSettings["APIURL"];
+                string total = ConfigurationManager.AppSettings["APITotal"];
                 string input = args[0];
                 string ext = Path.GetExtension(input);
                 // Might be a better way to combine the new filename, but this works at least.
@@ -46,11 +47,13 @@ namespace TinyfyConsoleContext
                 // Perform Image compression and poorly inform the user of the progress
                 try
                 {
+
                     Console.WriteLine("Uploading "+Path.GetFileName(input)+". Please wait.");
                     client.UploadData(url, File.ReadAllBytes(input));
                     Console.WriteLine("File Uploaded.");
                     Console.WriteLine("Downloading compressed image. Please Wait.");
                     client.DownloadFile(client.ResponseHeaders["Location"], output);
+                    Console.WriteLine("API Calls used: "+client.ResponseHeaders["Compression-Count"]+"/"+total);
                     Console.WriteLine("Image Downloaded to:"+ output);
 
                 }
