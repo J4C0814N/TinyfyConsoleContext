@@ -15,8 +15,15 @@ namespace TinyfyConsoleContext
  
         static void Main(string[] args)
         {
+            // Probably not a good idea.. but makes installation easy for n00bs
+            if (args.Length == 0)
+            {
+                install();
+                PauseQuit();
+            }
+
             // Make sure one argument was supplied
-            if (args.Length == 0 || args.Length < 1)
+            if (args.Length < 1)
             {
                 System.Console.WriteLine("Please enter an image location argument. or 'install' only.");
                 PauseQuit();
@@ -110,6 +117,7 @@ namespace TinyfyConsoleContext
                     regcmd.SetValue("", me);
                 
                 installed = true;
+                Console.WriteLine("Install Successful!");
             }
             catch(UnauthorizedAccessException){
                 Console.WriteLine("Not authorised to install.");
@@ -131,7 +139,6 @@ namespace TinyfyConsoleContext
                 if (regcmd != null)
                     regcmd.Close();
 
-                Console.WriteLine("Install Successful!");
             }
             return installed;
 
