@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,6 +18,27 @@ namespace TinyfyConsoleContext
  
         static void Main(string[] args)
         {
+            string key = ConfigurationManager.AppSettings["APIKey"];
+            string input = "large-input.png";
+            string output = "tiny-output.png";
+
+            string url = ConfigurationManager.AppSettings["APIURL"]; ;
+
+            WebClient client = new WebClient();
+            string auth = Convert.ToBase64String(Encoding.UTF8.GetBytes("api:" + key));
+            client.Headers.Add(HttpRequestHeader.Authorization, "Basic " + auth);
+
+            try
+            {
+                client.UploadData(url, File.ReadAllBytes(input));
+                /* Compression was successful, retrieve output from Location header. */
+                client.DownloadFile(client.ResponseHeaders["Location"], output);
+            }
+            catch (WebException)
+            {
+                /* Something went wrong! You can parse the JSON body for details. */
+                Console.WriteLine("Compression failed.");
+            }
         }
     }
 }
