@@ -18,8 +18,10 @@ namespace TinyfyConsoleContext
             // Probably not a good idea.. but makes installation easy for n00bs
             if (args.Length == 0)
             {
-                install();
-                PauseQuit();
+                if (!install())
+                    PauseQuit();
+                else
+                    Environment.Exit(0);
             }
 
             // Make sure one argument was supplied
@@ -32,8 +34,10 @@ namespace TinyfyConsoleContext
                 // Install the context menu and quit.
                 if (args[0].ToLower() == "install")
                 {
-                    install();
-                    PauseQuit();
+                    if(!install())
+                        PauseQuit();
+                    else
+                        Environment.Exit(0);
                 }
                 // Set up vars
                 string key = ConfigurationManager.AppSettings["APIKey"];
@@ -68,15 +72,18 @@ namespace TinyfyConsoleContext
                 catch (WebException)
                 {
                     Console.WriteLine("Compression failed.");
+                    PauseQuit();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine("Something went wrong:");
                     Console.WriteLine(e.Message);
+                    PauseQuit();
                 }
 
                 // Done.
-                PauseQuit();
+                Environment.Exit(0);
+                //PauseQuit();
 
             }
         }
@@ -98,48 +105,61 @@ namespace TinyfyConsoleContext
         /// <returns>Ture|False whether the reg key was added</returns>
         private static bool install()
         {
-            bool installed = false;
-            Console.WriteLine("installing...");
+            List<string> FileTypes = new List<string> { "jpegfile", "pngfile" };
 
             string me = System.Reflection.Assembly.GetEntryAssembly().Location + " %1";
-            string MenuName = "*\\shell\\NewMenuOption";
-            string Command = "*\\shell\\NewMenuOption\\command";
+            string MenuName = "\\shell\\NewMenuOption";
+            string Command = "\\shell\\NewMenuOption\\command";
+            bool installed = false;
 
             RegistryKey regmenu = null;
             RegistryKey regcmd = null;
-            try
+
+            foreach (var i in FileTypes)
             {
-                regmenu = Registry.ClassesRoot.CreateSubKey(MenuName);
-                if (regmenu != null)
-                    regmenu.SetValue("", "Tinify");
-                regcmd = Registry.ClassesRoot.CreateSubKey(Command);
-                if (regcmd != null)
-                    regcmd.SetValue("", me);
-                
-                installed = true;
-                Console.WriteLine("Install Successful!");
-            }
-            catch(UnauthorizedAccessException){
-                Console.WriteLine("Not authorised to install.");
-                Console.WriteLine("Install requires Administrator permissions.");
-                Console.WriteLine("Run install as Administrator.");
-                installed = false;
+                MenuName = i + MenuName;
+                Command = i + Command;
+
+                Console.WriteLine("installing "+i+"...");
+
+                try
+                {
+                    regmenu = Registry.ClassesRoot.CreateSubKey(MenuName);
+                    if (regmenu != null)
+                        regmenu.SetValue("", "Tinify");
+                    regcmd = Registry.ClassesRoot.CreateSubKey(Command);
+                    if (regcmd != null)
+                        regcmd.SetValue("", me);
+
+                    installed = true;
+                    Console.WriteLine("Install Successful!");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    Console.WriteLine("Not authorised to install.");
+                    Console.WriteLine("Install requires Administrator permissions.");
+                    Console.WriteLine("Run install as Administrator.");
+                    installed = false;
+
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Install Failed:");
+                    installed = false;
+                    Console.WriteLine(e.Message);
+                }
+                finally
+                {
+                    if (regmenu != null)
+                        regmenu.Close();
+                    if (regcmd != null)
+                        regcmd.Close();
+
+                }
 
             }
-            catch (Exception e)
-            {
-                Console.WriteLine("Install Failed:");
-                installed = false;
-                Console.WriteLine(e.Message);
-            }
-            finally
-            {
-                if (regmenu != null)
-                    regmenu.Close();
-                if (regcmd != null)
-                    regcmd.Close();
 
-            }
+
             return installed;
 
         }
