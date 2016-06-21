@@ -20,5 +20,6 @@ TODO:
 1. Verify input is an image
 2. Optimise code
 3. ~~Show remaining API Calls count~~
+4. Check for existing install (Do not duplicate Registry key)
 
 
