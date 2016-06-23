@@ -14,15 +14,19 @@ Once installed Simply:
 1. Right-click an image or image selection
 2. Select the Tinify context menu item
 3. An [ImageName]-Tinified.[ext] image will be created in the same directory
+ 
+An Application.log file should be automatically created in the .exe directory with hopefully useful information incase soemthing goes wrong. log will automatically be wiped if it is more than a week old.
+
 
 DUTYTODOS:
 
 1. Verify input is an image
 2. Allow multiple images at once (Probably thread / async)
 3. Set up for DI, pull code out into libraries
-2. ~~Add context menu to image file types only~~ .jpg .png added
-2. Optimise code
-3. ~~Show remaining API Calls count~~
-4. Check for existing install (Do not duplicate Registry key)
+4. ~~Application Logging~~
+5. ~~Add context menu to image file types only~~ .jpg .png added
+6. Optimise code
+7. ~~Show remaining API Calls count~~
+8. Check for existing install (Do not duplicate Registry key)
 
 
