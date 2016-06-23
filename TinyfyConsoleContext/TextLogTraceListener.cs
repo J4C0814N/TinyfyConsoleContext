@@ -20,6 +20,7 @@ namespace TinyfyConsoleContext
             bool Append = AppendLog(logFileLocation);
             traceWriter = new StreamWriter(filePath, Append);
             traceWriter.AutoFlush = true;
+            traceWriter.WriteLine(string.Empty);
         }
 
         public override void Write(string message)
