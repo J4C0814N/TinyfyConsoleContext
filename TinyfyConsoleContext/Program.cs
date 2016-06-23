@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,9 +13,11 @@ namespace TinyfyConsoleContext
 {
     class Program
     {
- 
+        static string AppName = "TinyfyConsoleContext";
+
         static void Main(string[] args)
         {
+            TraceLogger.Info("Starting App.", AppName);
             // Probably not a good idea.. but makes installation easy for n00bs
             if (args.Length == 0)
             {
@@ -25,12 +28,12 @@ namespace TinyfyConsoleContext
             }
 
             // Make sure one argument was supplied
+            // Redundant really... We already do something if its 0.
             if (args.Length < 1)
             {
-                System.Console.WriteLine("Please enter an image location argument. or 'install' only.");
+                Console.WriteLine("Please enter an image location argument. or 'install' only.");
                 PauseQuit();
             }else{
-
                 // Install the context menu and quit.
                 if (args[0].ToLower() == "install")
                 {
@@ -48,7 +51,7 @@ namespace TinyfyConsoleContext
                 // Might be a better way to combine the new filename, but this works at least.
                 string output = Path.GetDirectoryName(input)+@"\"+Path.GetFileNameWithoutExtension(input)+"-Tinyfied"+ext;
 
-                Console.WriteLine("Tinifying file: " + input+" To: "+output);
+                TraceLogger.DisplayInfo("Tinifying file: " + input+" To: "+output, AppName);
 
                 // create the WebClient and connect to the TinyPNG API
                 WebClient client = new WebClient();
@@ -59,29 +62,31 @@ namespace TinyfyConsoleContext
                 try
                 {
 
-                    Console.WriteLine("Uploading "+Path.GetFileName(input)+". Please wait.");
+                    TraceLogger.DisplayInfo("Uploading " + Path.GetFileName(input) + ". Please wait.", AppName);
                     client.UploadData(url, File.ReadAllBytes(input));
-                    Console.WriteLine("File Uploaded.");
-                    Console.WriteLine("Downloading compressed image. Please Wait.");
+                    TraceLogger.DisplayInfo("File Uploaded.", AppName);
+                    TraceLogger.DisplayInfo("Downloading compressed image. Please Wait.", AppName);
                     client.DownloadFile(client.ResponseHeaders["Location"], output);
-                    Console.WriteLine("API Calls used: "+client.ResponseHeaders["Compression-Count"]+"/"+total);
-                    Console.WriteLine("Image Downloaded to:"+ output);
+                    TraceLogger.DisplayInfo("API Calls used: " + client.ResponseHeaders["Compression-Count"] + "/" + total, AppName);
+                    TraceLogger.DisplayInfo("Image Downloaded to:" + output, AppName);
 
                 }
                 // Something went wrong!
-                catch (WebException)
+                catch (WebException e)
                 {
-                    Console.WriteLine("Compression failed.");
+                    TraceLogger.DisplayError("Compression failed.", AppName);
+                    TraceLogger.Error(e, AppName);
                     PauseQuit();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Something went wrong:");
-                    Console.WriteLine(e.Message);
+                    TraceLogger.DisplayError("Something went wrong.", AppName);
+                    TraceLogger.Error(e, AppName);
                     PauseQuit();
                 }
 
                 // Done.
+                TraceLogger.Info("Done, quitting.", AppName);
                 Environment.Exit(0);
                 //PauseQuit();
 
@@ -93,6 +98,7 @@ namespace TinyfyConsoleContext
         /// </summary>
         private static void PauseQuit()
         {
+            TraceLogger.Info("Pause quit.", AppName);
             Console.WriteLine("Press any key to quit.");
             Console.ReadLine();
             Environment.Exit(0);
@@ -106,7 +112,7 @@ namespace TinyfyConsoleContext
         private static bool install()
         {
             List<string> FileTypes = new List<string> { "jpegfile", "pngfile" };
-
+            
             string me = System.Reflection.Assembly.GetEntryAssembly().Location + " %1";
             string MenuName = "\\shell\\NewMenuOption";
             string Command = "\\shell\\NewMenuOption\\command";
@@ -120,7 +126,7 @@ namespace TinyfyConsoleContext
                 MenuName = i + MenuName;
                 Command = i + Command;
 
-                Console.WriteLine("installing "+i+"...");
+                TraceLogger.DisplayInfo("Installing.", AppName);
 
                 try
                 {
@@ -132,10 +138,12 @@ namespace TinyfyConsoleContext
                         regcmd.SetValue("", me);
 
                     installed = true;
-                    Console.WriteLine("Install Successful!");
+                    TraceLogger.DisplayInfo("Install succeeded.", AppName);
                 }
                 catch (UnauthorizedAccessException)
                 {
+                    TraceLogger.DisplayError("Install failed: Unauthorised", AppName);
+                    // Trace log doesnt need this shit
                     Console.WriteLine("Not authorised to install.");
                     Console.WriteLine("Install requires Administrator permissions.");
                     Console.WriteLine("Run install as Administrator.");
@@ -144,9 +152,9 @@ namespace TinyfyConsoleContext
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Install Failed:");
+                    TraceLogger.Error(e, AppName);
                     installed = false;
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine("Install failed. See log for details.");
                 }
                 finally
                 {
@@ -158,7 +166,6 @@ namespace TinyfyConsoleContext
                 }
 
             }
-
 
             return installed;
 
